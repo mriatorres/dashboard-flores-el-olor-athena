@@ -1,14 +1,16 @@
-# Radar Gerencial de Anomalías
+# Radar Gerencial de Anomalías ![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/pikachuflor.gif)
 
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/pikachuflor.gif)
 
-## Flores El Olor S.A.S.
+
+## Flores El Olor S.A.S. 
 
 Dashboard analítico desarrollado como evidencia complementaria para el examen práctico de Arquitecturas de Nube y Big Data.
 
 La aplicación transforma resultados obtenidos mediante consultas SQL ejecutadas sobre Amazon Athena en visualizaciones interactivas orientadas a apoyar la toma de decisiones dentro del caso empresarial de Flores El Olor S.A.S.
 
 El enfoque del análisis está centrado en la identificación de patrones, anomalías operativas, riesgos productivos y oportunidades de mejora que podrían requerir atención gerencial.
+
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial.png)
 
 ---
 
