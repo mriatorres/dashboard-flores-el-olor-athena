@@ -1,4 +1,5 @@
-# [](https://blob.gifcities.org/gifcities/4ADIRMLC6FH2CDJ5MKS5B6UW5KUG3JRV.gif) Radar Gerencial de Anomalías
+# Radar Gerencial de Anomalías
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/pikachuflor.gif)
 ## Flores El Olor S.A.S.
 
 Aplicación web desarrollada como componente analítico del examen práctico de Arquitecturas de Nube y Big Data.
