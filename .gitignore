@@ -1,0 +1,46 @@
+# ==========================================
+# PYTHON
+# ==========================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# ==========================================
+# STREAMLIT
+# ==========================================
+
+.streamlit/secrets.toml
+
+# ==========================================
+# AWS CREDENTIALS
+# ==========================================
+
+.aws/
+credentials
+config
+
+# Archivos de configuración personalizados
+aws_config_local.py
+
+# Variables de entorno
+.env
+.env.*
+*.env
+
+# ==========================================
+# IDEs
+# ==========================================
+
+.vscode/
+.idea/
+
+# ==========================================
+# JUPYTER
+# ===========
