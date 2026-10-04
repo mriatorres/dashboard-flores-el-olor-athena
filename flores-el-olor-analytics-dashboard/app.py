@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from pyathena import connect
 
 # =====================================================
 # CONFIGURACIÓN
@@ -14,51 +13,69 @@ st.set_page_config(
 )
 
 # =====================================================
-# CONEXIÓN ATHENA
+# FUNCIONES
 # =====================================================
 
-@st.cache_resource
-def get_connection():
-    return connect(
-        s3_staging_dir="s3://flores-el-olor-mtt/athena-results/",
-        region_name="us-east-1"
+@st.cache_data
+def cargar_datos():
+
+    produccion = pd.read_csv(
+        "data/produccion_perdidas.csv"
     )
 
-conn = get_connection()
+    costos = pd.read_csv(
+        "data/costos_por_tallo.csv"
+    )
+
+    dependencia = pd.read_csv(
+        "data/dependencia_comercial.csv"
+    )
+
+    variedades = pd.read_csv(
+        "data/variedades_problematicas.csv"
+    )
+
+    riesgo = pd.read_csv(
+        "data/riesgo_2027.csv"
+    )
+
+    return (
+        produccion,
+        costos,
+        dependencia,
+        variedades,
+        riesgo
+    )
 
 
-@st.cache_data(ttl=300)
-def ejecutar_query(sql):
-    return pd.read_sql(sql, conn)
+def limpiar_dataframe(df):
 
-# =====================================================
-# CONSULTAS
-# =====================================================
+    df = df.copy()
 
-QUERY_INEFICIENCIA = """
-SELECT *
-FROM vw_indice_ineficiencia
-"""
+    df.replace(
+        ["", "NULL", "null", "NaN", "nan"],
+        pd.NA,
+        inplace=True
+    )
 
-QUERY_DEPENDENCIA = """
-SELECT *
-FROM vw_dependencia_comercial
-"""
+    df.fillna(0, inplace=True)
 
-QUERY_PRODUCCION_PERDIDAS = """
-SELECT *
-FROM vw_produccion_perdidas
-"""
+    return df
 
-QUERY_VARIEDADES = """
-SELECT *
-FROM vw_variedades_problematicas
-"""
 
-QUERY_FORECAST = """
-SELECT *
-FROM vw_riesgo_2027
-"""
+def convertir_numerico(df, columnas):
+
+    for col in columnas:
+
+        if col in df.columns:
+
+            df[col] = pd.to_numeric(
+                df[col],
+                errors="coerce"
+            ).fillna(0)
+
+    return df
+
 
 # =====================================================
 # CARGA DATOS
@@ -66,15 +83,65 @@ FROM vw_riesgo_2027
 
 try:
 
-    df_ineficiencia = ejecutar_query(QUERY_INEFICIENCIA)
-    df_dependencia = ejecutar_query(QUERY_DEPENDENCIA)
-    df_produccion = ejecutar_query(QUERY_PRODUCCION_PERDIDAS)
-    df_variedades = ejecutar_query(QUERY_VARIEDADES)
-    df_forecast = ejecutar_query(QUERY_FORECAST)
+    (
+        df_produccion,
+        df_costos,
+        df_dependencia,
+        df_variedades,
+        df_riesgo
+    ) = cargar_datos()
+
+    df_produccion = limpiar_dataframe(df_produccion)
+    df_costos = limpiar_dataframe(df_costos)
+    df_dependencia = limpiar_dataframe(df_dependencia)
+    df_variedades = limpiar_dataframe(df_variedades)
+    df_riesgo = limpiar_dataframe(df_riesgo)
+
+    df_produccion = convertir_numerico(
+        df_produccion,
+        [
+            "tallos_exportados",
+            "perdidas",
+            "porcentaje_perdida"
+        ]
+    )
+
+    df_costos = convertir_numerico(
+        df_costos,
+        [
+            "costo_total",
+            "tallos_exportados",
+            "costo_por_tallo"
+        ]
+    )
+
+    df_dependencia = convertir_numerico(
+        df_dependencia,
+        [
+            "valor_facturado",
+            "porcentaje"
+        ]
+    )
+
+    df_variedades = convertir_numerico(
+        df_variedades,
+        [
+            "perdidas",
+            "ingreso_generado"
+        ]
+    )
+
+    df_riesgo = convertir_numerico(
+        df_riesgo,
+        [
+            "produccion_proyectada",
+            "demanda_proyectada"
+        ]
+    )
 
 except Exception as e:
 
-    st.error("Error conectando con Athena")
+    st.error("Error cargando los archivos CSV.")
     st.code(str(e))
     st.stop()
 
@@ -87,9 +154,12 @@ st.subheader("Flores El Olor S.A.S.")
 
 st.info(
     """
-    Este dashboard consulta información directamente desde Amazon Athena.
-    Los datos analizados permanecen almacenados en Amazon S3 de acuerdo con
-    la arquitectura construida durante el examen.
+    Las visualizaciones fueron generadas a partir de consultas SQL
+    ejecutadas previamente en Amazon Athena sobre los datos
+    almacenados en Amazon S3.
+
+    Los resultados fueron exportados desde Athena y utilizados
+    como fuente de datos para este dashboard.
     """
 )
 
@@ -97,38 +167,96 @@ st.info(
 # KPIS
 # =====================================================
 
+st.header("Indicadores Gerenciales")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric(
-        "Mayor Índice de Ineficiencia",
-        round(df_ineficiencia["indice_ineficiencia"].max(), 2)
-    )
+
+    try:
+
+        finca_mayor_costo = (
+            df_costos.sort_values(
+                by="costo_por_tallo",
+                ascending=False
+            )
+            .iloc[0]
+        )
+
+        st.metric(
+            "Mayor Costo por Tallo",
+            round(
+                float(
+                    finca_mayor_costo["costo_por_tallo"]
+                ),
+                2
+            )
+        )
+
+    except Exception:
+
+        st.metric(
+            "Mayor Costo por Tallo",
+            "N/D"
+        )
 
 with col2:
-    st.metric(
-        "Dependencia Comercial (%)",
-        round(df_dependencia["porcentaje"].max(), 2)
-    )
+
+    try:
+
+        pais_principal = (
+            df_dependencia.sort_values(
+                by="porcentaje",
+                ascending=False
+            )
+            .iloc[0]
+        )
+
+        st.metric(
+            "Dependencia Comercial (%)",
+            round(
+                float(
+                    pais_principal["porcentaje"]
+                ),
+                2
+            )
+        )
+
+    except Exception:
+
+        st.metric(
+            "Dependencia Comercial (%)",
+            "N/D"
+        )
 
 with col3:
-    meses_riesgo = len(
-        df_forecast[
-            df_forecast["demanda_proyectada"]
-            >
-            df_forecast["produccion_proyectada"]
-        ]
-    )
 
-    st.metric(
-        "Meses en Riesgo",
-        meses_riesgo
-    )
+    try:
+
+        meses_riesgo = len(
+            df_riesgo[
+                df_riesgo["demanda_proyectada"]
+                >
+                df_riesgo["produccion_proyectada"]
+            ]
+        )
+
+        st.metric(
+            "Meses en Riesgo",
+            meses_riesgo
+        )
+
+    except Exception:
+
+        st.metric(
+            "Meses en Riesgo",
+            "N/D"
+        )
 
 st.divider()
 
 # =====================================================
-# GRAFICO 1
+# GRÁFICO 1
 # =====================================================
 
 st.subheader("Producción vs Pérdidas")
@@ -136,75 +264,189 @@ st.subheader("Producción vs Pérdidas")
 st.markdown(
     """
     Cada punto representa una finca.
-    Los cuadrantes superiores permiten identificar operaciones que
-    presentan simultáneamente altos costos y elevados porcentajes de pérdida.
     """
 )
 
-fig1 = px.scatter(
-    df_produccion,
-    x="porcentaje_perdida",
-    y="costo_por_tallo",
-    size="tallos_exportados",
-    color="finca",
-    hover_name="finca"
-)
+try:
 
-st.plotly_chart(fig1, use_container_width=True)
+    fig1 = px.scatter(
+        df_produccion,
+        x="porcentaje_perdida",
+        y="tallos_exportados",
+        color="finca",
+        size="perdidas",
+        hover_name="finca"
+    )
+
+    st.plotly_chart(
+        fig1,
+        use_container_width=True
+    )
+
+except Exception as e:
+
+    st.warning(
+        f"No fue posible generar este gráfico: {e}"
+    )
 
 # =====================================================
-# GRAFICO 2
+# GRÁFICO 2
+# =====================================================
+
+st.subheader("Costo por Tallo Exportado")
+
+try:
+
+    fig2 = px.bar(
+        df_costos,
+        x="finca",
+        y="costo_por_tallo",
+        color="finca"
+    )
+
+    st.plotly_chart(
+        fig2,
+        use_container_width=True
+    )
+
+except Exception as e:
+
+    st.warning(
+        f"No fue posible generar este gráfico: {e}"
+    )
+
+# =====================================================
+# GRÁFICO 3
 # =====================================================
 
 st.subheader("Variedades Problemáticas")
 
-st.markdown(
-    """
-    Se comparan pérdidas registradas contra ingresos generados.
-    """
-)
+try:
 
-fig2 = px.scatter(
-    df_variedades,
-    x="plantas_perdidas",
-    y="ingreso_generado",
-    color="variedad",
-    hover_name="variedad"
-)
+    fig3 = px.scatter(
+        df_variedades,
+        x="perdidas",
+        y="ingreso_generado",
+        color="variedad",
+        hover_name="variedad"
+    )
 
-st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(
+        fig3,
+        use_container_width=True
+    )
 
-# =====================================================
-# GRAFICO 3
-# =====================================================
+except Exception as e:
 
-st.subheader("Dependencia de Mercados")
-
-fig3 = px.treemap(
-    df_dependencia,
-    path=["pais"],
-    values="valor_facturado"
-)
-
-st.plotly_chart(fig3, use_container_width=True)
+    st.warning(
+        f"No fue posible generar este gráfico: {e}"
+    )
 
 # =====================================================
-# GRAFICO 4
+# GRÁFICO 4
+# =====================================================
+
+st.subheader("Dependencia Comercial")
+
+try:
+
+    fig4 = px.treemap(
+        df_dependencia,
+        path=["pais"],
+        values="valor_facturado"
+    )
+
+    st.plotly_chart(
+        fig4,
+        use_container_width=True
+    )
+
+except Exception as e:
+
+    st.warning(
+        f"No fue posible generar este gráfico: {e}"
+    )
+
+# =====================================================
+# GRÁFICO 5
 # =====================================================
 
 st.subheader("Riesgo de Desabastecimiento 2027")
 
-fig4 = px.line(
-    df_forecast,
-    x="mes",
-    y=[
-        "produccion_proyectada",
-        "demanda_proyectada"
-    ],
-    markers=True
+try:
+
+    fig5 = px.line(
+        df_riesgo,
+        x="mes",
+        y=[
+            "produccion_proyectada",
+            "demanda_proyectada"
+        ],
+        markers=True
+    )
+
+    st.plotly_chart(
+        fig5,
+        use_container_width=True
+    )
+
+except Exception as e:
+
+    st.warning(
+        f"No fue posible generar este gráfico: {e}"
+    )
+
+# =====================================================
+# TABLA DE RIESGOS
+# =====================================================
+
+st.subheader(
+    "Meses donde la demanda supera la producción"
 )
 
-st.plotly_chart(fig4, use_container_width=True)
+try:
+
+    riesgos = df_riesgo[
+        df_riesgo["demanda_proyectada"]
+        >
+        df_riesgo["produccion_proyectada"]
+    ]
+
+    st.dataframe(
+        riesgos,
+        use_container_width=True
+    )
+
+except Exception as e:
+
+    st.warning(
+        f"No fue posible mostrar la tabla: {e}"
+    )
+
+# =====================================================
+# DATOS CRUDOS
+# =====================================================
+
+with st.expander("Ver datos utilizados"):
+
+    try:
+        st.write("Producción")
+        st.dataframe(df_produccion)
+
+        st.write("Costos")
+        st.dataframe(df_costos)
+
+        st.write("Dependencia Comercial")
+        st.dataframe(df_dependencia)
+
+        st.write("Variedades")
+        st.dataframe(df_variedades)
+
+        st.write("Riesgo 2027")
+        st.dataframe(df_riesgo)
+
+    except Exception:
+        pass
 
 # =====================================================
 # CONCLUSIÓN
@@ -216,14 +458,15 @@ st.subheader("Conclusión Gerencial")
 
 st.write(
     """
-    Se identifican diferencias significativas entre las fincas analizadas.
+    El análisis permite identificar diferencias relevantes
+    entre las fincas productivas, especialmente en términos
+    de pérdidas y costos operativos.
 
-    Algunas operaciones presentan niveles de pérdida elevados respecto a
-    su desempeño productivo, mientras que determinadas variedades generan
-    pérdidas importantes en comparación con su aporte económico.
+    También se observan variedades cuyo aporte económico
+    resulta inferior al impacto de las pérdidas registradas.
 
-    La proyección para 2027 evidencia periodos donde la demanda estimada
-    supera la capacidad productiva proyectada, situación que merece
-    seguimiento preventivo por parte de la gerencia.
+    Finalmente, las proyecciones para 2027 muestran periodos
+    donde la demanda esperada supera la capacidad productiva
+    proyectada, situación que merece seguimiento preventivo.
     """
 )
