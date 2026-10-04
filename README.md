@@ -436,31 +436,19 @@ Estas consultas fueron ejecutadas sobre Amazon Athena utilizando los datos almac
 
 Capturas sugeridas:
 
-- Bucket S3.
-- Estructura raw.
-- Estructura curated.
-- Ubicación de resultados de Athena.
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/s3structure.png)
 
 ---
 
 ## Amazon Athena
 
-Capturas sugeridas:
-
-- Tablas externas creadas.
-- Consultas SQL ejecutadas.
-- Resultados obtenidos.
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/athenaConsults.png)
 
 ---
 
 ## Dashboard
 
-Capturas sugeridas:
-
-- Indicadores ejecutivos.
-- Visualizaciones.
-- Tabla de riesgos.
-- Conclusión gerencial.
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
 
 ---
 
