@@ -12,6 +12,8 @@ El enfoque del análisis está centrado en la identificación de patrones, anoma
 
 ![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial.png)
 
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
+
 ---
 
 # Objetivo
