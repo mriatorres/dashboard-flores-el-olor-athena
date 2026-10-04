@@ -434,7 +434,6 @@ Estas consultas fueron ejecutadas sobre Amazon Athena utilizando los datos almac
 
 ## Arquitectura AWS
 
-Capturas sugeridas:
 
 ![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/s3structure.png)
 
