@@ -1,148 +1,76 @@
-# Radar Gerencial de Anomalías ![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/pikachuflor.gif)
+# Radar Gerencial de Anomalías
 
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/pikachuflor.gif)
 
+---
 
-## Flores El Olor S.A.S. 
+## Flores El Olor S.A.S.
 
-Dashboard analítico desarrollado como evidencia complementaria para el examen práctico de Arquitecturas de Nube y Big Data.
+Radar Gerencial de Anomalías es una aplicación web analítica desarrollada como parte del examen práctico de Arquitecturas de Nube y Big Data.
 
-La aplicación transforma resultados obtenidos mediante consultas SQL ejecutadas sobre Amazon Athena en visualizaciones interactivas orientadas a apoyar la toma de decisiones dentro del caso empresarial de Flores El Olor S.A.S.
+La solución permite analizar información operacional, productiva y comercial de la empresa ficticia Flores El Olor S.A.S., transformando datos almacenados en un Data Lake de AWS en información útil para la toma de decisiones.
 
-El enfoque del análisis está centrado en la identificación de patrones, anomalías operativas, riesgos productivos y oportunidades de mejora que podrían requerir atención gerencial.
+La aplicación consulta información en tiempo real desde Amazon Athena y presenta los resultados mediante visualizaciones interactivas desarrolladas con Streamlit y Plotly.
 
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial.png)
+images/radargerencial.png
 
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
+images/radargerencial2.png
 
 ---
 
 # Objetivo
 
-El dashboard busca responder preguntas como:
+El dashboard busca responder preguntas estratégicas como:
 
 - ¿Qué fincas presentan porcentajes de pérdida superiores al promedio?
 - ¿Cuáles tienen mayores costos por tallo exportado?
 - ¿Existe dependencia comercial de determinados mercados?
-- ¿Qué variedades generan pérdidas importantes?
-- ¿Existen riesgos de desabastecimiento en las proyecciones para 2027?
-- ¿Qué situaciones deberían ser revisadas por la gerencia?
+- ¿Qué variedades generan pérdidas significativas?
+- ¿Existen riesgos de desabastecimiento para 2027?
+- ¿Qué operaciones requieren atención inmediata por parte de la gerencia?
 
 ---
 
 # Caso de Estudio
 
-Flores El Olor S.A.S. es una empresa ficticia dedicada a la producción y exportación de crisantemos.
+Flores El Olor S.A.S. es una empresa ficticia dedicada a la producción y exportación de flores tipo crisantemo.
 
-A partir de información histórica entre 2021 y 2026 y proyecciones para 2027, se construyó una arquitectura de análisis utilizando servicios de AWS para:
+A partir de información histórica entre los años 2021 y 2026 y proyecciones para 2027, se construyó una arquitectura de análisis basada completamente en servicios de AWS para:
 
-- Almacenar información.
-- Organizar datos en un Data Lake.
-- Crear tablas externas.
-- Ejecutar consultas SQL.
+- Centralizar información en un Data Lake.
+- Ejecutar consultas SQL analíticas.
 - Obtener indicadores de negocio.
-
-Posteriormente se desarrolló este dashboard como mecanismo de visualización de resultados.
-
----
-
-# Arquitectura Utilizada
-
-```text
-Datos históricos
-       │
-       ▼
-
- Amazon S3
-(raw / curated)
-
-       │
-       ▼
-
- AWS Glue Catalog
-
-       │
-       ▼
-
- Amazon Athena
-
-       │
-       ▼
-
- Athena Results
-
-       │
-       ▼
-
- Dashboard Streamlit
-
-       │
-       ▼
-
- GitHub + URL Pública
-```
+- Detectar anomalías operativas.
+- Identificar riesgos productivos.
+- Visualizar resultados mediante una aplicación web.
 
 ---
 
-# Flujo de Datos
+# Diseño de la Aplicación
 
-Las visualizaciones mostradas en la aplicación provienen de consultas ejecutadas en Amazon Athena.
+La solución fue diseñada siguiendo una arquitectura desacoplada donde almacenamiento, procesamiento y visualización se encuentran separados.
 
-Proceso utilizado:
+## Amazon S3
 
-1. Carga de archivos al bucket S3.
-2. Creación de tablas externas en Athena.
-3. Ejecución de consultas SQL analíticas.
-4. Exportación de resultados desde Athena.
-5. Descarga de resultados en formato CSV.
-6. Consumo de dichos resultados desde Streamlit.
-7. Generación de visualizaciones interactivas.
+Amazon S3 funciona como Data Lake de la solución.
 
----
+En este servicio se almacenan:
 
-# Tecnologías Utilizadas
+- Información histórica de producción.
+- Datos de exportación.
+- Costos operativos.
+- Información de nómina variable.
+- Proyecciones para 2027.
 
-- Python
-- Streamlit
-- Pandas
-- Plotly
-- Amazon S3
-- AWS Glue Catalog
-- Amazon Athena
-- GitHub
+Los datos permanecen almacenados en S3 y son consultados directamente por Athena.
 
 ---
 
-# Estructura del Proyecto
+## AWS Glue Data Catalog
 
-```text
-flores-el-olor-analytics-dashboard
-│
-├── app.py
-├── consultas.sql
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
-├── data
-│   ├── produccion_perdidas.csv
-│   ├── costos_por_tallo.csv
-│   ├── dependencia_comercial.csv
-│   ├── variedades_problematicas.csv
-│   └── riesgo_2027.csv
-│
-└── images
-    ├── arquitectura.png
-    ├── athena-query.png
-    ├── s3-results.png
-    ├── dashboard.png
-    └── pikachuflor.gif
-```
+AWS Glue Catalog administra los metadatos de las tablas externas utilizadas por Athena.
 
----
-
-# Modelo de Datos Utilizado
-
-Tablas analizadas en Athena:
+Entre las tablas registradas se encuentran:
 
 - fincas
 - variedades
@@ -152,17 +80,174 @@ Tablas analizadas en Athena:
 - empaque
 - pedidos
 - exportaciones
+- exportaciones_curated
 - costos
 - nomina_variable
 - forecast_2027
 
-Estas tablas fueron utilizadas para generar las consultas SQL que alimentan los archivos CSV consumidos por el dashboard.
+Estas tablas permiten consultar información utilizando SQL sin necesidad de mover los archivos del Data Lake.
+
+---
+
+## Amazon Athena
+
+Athena constituye la capa analítica de la solución.
+
+Todas las visualizaciones del dashboard son construidas mediante consultas SQL ejecutadas directamente sobre Athena.
+
+Las consultas permiten calcular indicadores relacionados con:
+
+- Producción.
+- Pérdidas.
+- Costos.
+- Mercados internacionales.
+- Variedades productivas.
+- Proyecciones de demanda.
+- Riesgos futuros.
+
+---
+
+## Amazon EC2
+
+La aplicación web fue desplegada en una instancia Amazon EC2 con sistema operativo Linux.
+
+Dentro de la instancia se configuró:
+
+- Python.
+- Entorno virtual.
+- Streamlit.
+- PyAthena.
+- Dependencias requeridas por el proyecto.
+
+El dashboard se ejecuta como un servicio administrado mediante systemd para garantizar disponibilidad continua.
+
+---
+
+## Streamlit
+
+Streamlit constituye la capa de presentación.
+
+Sus responsabilidades incluyen:
+
+- Ejecutar consultas sobre Athena.
+- Procesar información mediante Pandas.
+- Generar indicadores ejecutivos.
+- Construir gráficos interactivos con Plotly.
+- Publicar la información mediante una interfaz web accesible desde Internet.
+
+---
+
+# Arquitectura Implementada
+
+```text
+Usuario
+   │
+   ▼
+
+URL Pública
+http://3.89.204.194:8501
+
+   │
+   ▼
+
+Amazon EC2
+(Streamlit)
+
+   │
+   ▼
+
+Amazon Athena
+
+   │
+   ▼
+
+AWS Glue Data Catalog
+
+   │
+   ▼
+
+Amazon S3
+(Data Lake)
+```
+
+---
+
+# Flujo de Datos
+
+Cada vez que un usuario accede a la aplicación se ejecuta el siguiente flujo:
+
+1. El usuario accede a la URL pública.
+2. La solicitud llega a la instancia EC2.
+3. Streamlit ejecuta consultas SQL sobre Athena.
+4. Athena consulta los datos almacenados en Amazon S3.
+5. Los resultados son enviados a la aplicación.
+6. Pandas procesa la información obtenida.
+7. Plotly genera las visualizaciones.
+8. El dashboard es renderizado y mostrado al usuario.
+
+Toda la información es obtenida dinámicamente desde Athena en tiempo real.
+
+No se utilizan archivos CSV descargados manualmente ni datos almacenados localmente.
+
+---
+
+# Tecnologías Utilizadas
+
+- Python
+- Streamlit
+- Pandas
+- Plotly
+- PyAthena
+- Boto3
+- Amazon S3
+- AWS Glue Data Catalog
+- Amazon Athena
+- Amazon EC2
+- Linux
+- Systemd
+- GitHub
+
+---
+
+# Estructura del Proyecto
+
+```text
+dashboard-flores-el-olor-athena
+│
+├── app.py
+├── consultas.sql
+├── requirements.txt
+├── README.md
+│
+└── images
+    ├── pikachuflor.gif
+    ├── radargerencial.png
+    ├── radargerencial2.png
+    ├── s3structure.png
+    └── athenaConsults.png
+```
+
+---
+
+## Aplicación Web Desplegada
+
+La aplicación se encuentra desplegada en una instancia Amazon EC2 y es accesible públicamente mediante la siguiente URL:
+
+### URL pública del Dashboard
+
+```text
+http://3.89.204.194:8501
+```
+
+La aplicación permanece disponible mientras la instancia EC2 se encuentre encendida.
+
+La solución implementa una arquitectura analítica completa sobre AWS, consumiendo datos directamente desde Amazon Athena y Amazon S3 sin utilizar archivos CSV descargados localmente.
 
 ---
 
 # Instalación
 
-## 1. Clonar el repositorio
+## Clonar el repositorio
 
 ```bash
 git clone https://github.com/mriatorres/dashboard-flores-el-olor-athena.git
@@ -171,12 +256,12 @@ git clone https://github.com/mriatorres/dashboard-flores-el-olor-athena.git
 Ingresar al proyecto:
 
 ```bash
-cd dashboard-flores-el-olor-athena/flores-el-olor-analytics-dashboard
+cd dashboard-flores-el-olor-athena
 ```
 
 ---
 
-## 2. Crear entorno virtual (Opcional)
+## Crear entorno virtual
 
 ### Windows
 
@@ -185,16 +270,16 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### Linux / macOS
+### Linux
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ---
 
-## 3. Instalar dependencias
+## Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
@@ -202,31 +287,25 @@ pip install -r requirements.txt
 
 ---
 
-## 4. Verificar los archivos de datos
+# Dependencias
 
-La carpeta `data` debe contener:
-
-```text
-produccion_perdidas.csv
-costos_por_tallo.csv
-dependencia_comercial.csv
-variedades_problematicas.csv
-riesgo_2027.csv
+```txt
+streamlit
+pandas
+plotly
+pyathena
+boto3
 ```
-
-Estos archivos corresponden a resultados exportados previamente desde Amazon Athena.
 
 ---
 
-# Ejecución
-
-Desde la carpeta principal del proyecto:
+# Ejecución Local
 
 ```bash
 streamlit run app.py
 ```
 
-La aplicación estará disponible en:
+Acceso local:
 
 ```text
 http://localhost:8501
@@ -234,134 +313,102 @@ http://localhost:8501
 
 ---
 
-# Dependencias
+# Despliegue en Amazon EC2
 
-Contenido del archivo `requirements.txt`:
+La versión final fue desplegada en una instancia Amazon EC2.
 
-```txt
-streamlit
-pandas
-plotly
+La aplicación se ejecuta mediante:
+
+```bash
+streamlit run app.py \
+--server.address 0.0.0.0 \
+--server.port 8501
+```
+
+Posteriormente fue configurada como un servicio persistente utilizando systemd.
+
+Beneficios:
+
+- Arranque automático.
+- Reinicio automático ante fallos.
+- Disponibilidad permanente.
+- Acceso mediante URL pública.
+
+URL de acceso:
+
+```text
+http://3.89.204.194:8501
 ```
 
 ---
 
 # Indicadores Ejecutivos
 
-La primera sección del dashboard presenta indicadores diseñados para resumir rápidamente las principales situaciones de interés para la gerencia.
+La sección superior del dashboard presenta indicadores diseñados para resumir rápidamente las principales situaciones de interés para la gerencia.
 
 ## Mayor Costo por Tallo
 
-Este indicador identifica la finca con el mayor costo promedio por tallo exportado.
+Identifica la finca con el mayor costo promedio por tallo exportado.
 
 Fórmula:
 
 ```text
-Costo Total Registrado
+Costo Total
 /
 Tallos Exportados
 ```
 
-Interpretación:
-
-- Valores bajos indican mayor eficiencia productiva.
-- Valores altos sugieren operaciones costosas que podrían afectar la rentabilidad.
-
-Pregunta de negocio:
-
-> ¿Qué finca tiene actualmente el proceso productivo más costoso?
+Permite identificar operaciones productivas con costos elevados.
 
 ---
 
 ## Dependencia Comercial (%)
 
-Representa el porcentaje de ingresos generado por el principal país comprador.
+Representa el porcentaje de ingresos generado por el principal mercado comprador.
 
-Interpretación:
-
-- Valores altos indican una fuerte dependencia de pocos mercados.
-- Valores bajos indican una cartera comercial más diversificada.
-
-Pregunta de negocio:
-
-> ¿Qué tan dependiente es la empresa de un único mercado internacional?
+Permite evaluar el nivel de concentración comercial y el riesgo asociado a depender de pocos mercados.
 
 ---
 
 ## Meses en Riesgo
 
-Indica la cantidad de meses donde la demanda proyectada es superior a la producción proyectada.
+Muestra la cantidad de meses donde:
 
-Interpretación:
+```text
+Demanda Proyectada > Producción Proyectada
+```
 
-- Valores altos representan escenarios potenciales de desabastecimiento.
-- Valores bajos indican una capacidad productiva alineada con la demanda esperada.
-
-Pregunta de negocio:
-
-> ¿Cuántos meses presentan riesgo de incumplimiento en 2027?
+Permite anticipar posibles escenarios de desabastecimiento.
 
 ---
 
-# Explicación de las Visualizaciones
+# Visualizaciones
 
 ## Producción vs Pérdidas
 
-Gráfico de dispersión donde cada punto representa una finca.
+Gráfico de dispersión que compara:
 
-Variables:
+- Producción exportada.
+- Porcentaje de pérdida.
+- Cantidad de pérdidas.
 
-- Eje X: Porcentaje de pérdida.
-- Eje Y: Tallos exportados.
-- Tamaño del punto: Cantidad total de pérdidas.
-- Color: Finca.
-
-Objetivo:
-
-Comparar productividad y pérdidas simultáneamente.
-
-Permite detectar:
-
-- Fincas con pérdidas elevadas.
-- Fincas con baja eficiencia operativa.
-- Diferencias significativas entre unidades productivas.
+Permite detectar fincas con comportamientos operativos atípicos.
 
 ---
 
 ## Costo por Tallo Exportado
 
-Gráfico de barras que compara el costo promedio por tallo exportado entre fincas.
+Gráfico de barras utilizado para comparar la eficiencia económica entre fincas.
 
-Objetivo:
-
-Evaluar la eficiencia económica de cada operación productiva.
-
-Permite detectar:
-
-- Fincas con mayores costos.
-- Oportunidades de reducción de gastos.
-- Desempeños operativos atípicos.
+Permite identificar operaciones con mayores costos productivos.
 
 ---
 
 ## Variedades Problemáticas
 
-Gráfico de dispersión que relaciona pérdidas registradas e ingresos generados por variedad.
+Relaciona pérdidas registradas e ingresos generados por cada variedad.
 
-Variables:
-
-- Eje X: Pérdidas.
-- Eje Y: Ingresos generados.
-
-Objetivo:
-
-Analizar qué variedades aportan menos valor económico frente a las pérdidas asociadas.
-
-Permite detectar:
-
-- Variedades poco rentables.
-- Material vegetal con problemas productivos.
-- Posibles oportunidades de optimización.
+Facilita la identificación de variedades con bajo retorno económico.
 
 ---
 
@@ -369,85 +416,50 @@ Permite detectar:
 
 Visualización tipo Treemap donde cada bloque representa un país comprador.
 
-El tamaño de cada bloque depende del valor facturado.
-
-Objetivo:
-
-Visualizar la distribución geográfica de los ingresos.
-
-Permite detectar:
-
-- Mercados estratégicos.
-- Concentración comercial.
-- Riesgos asociados a la dependencia de determinados clientes internacionales.
+Permite analizar la distribución geográfica de los ingresos.
 
 ---
 
 ## Riesgo de Desabastecimiento 2027
 
-Gráfico temporal que compara:
+Compara:
 
 - Producción proyectada.
 - Demanda proyectada.
 
-Objetivo:
-
-Identificar periodos futuros donde la capacidad productiva podría ser insuficiente.
-
-Permite detectar:
-
-- Déficits de producción.
-- Riesgos de incumplimiento.
-- Necesidades futuras de planeación.
-
----
-
-## Tabla de Riesgos
-
-Presenta únicamente los periodos donde:
-
-```text
-Demanda Proyectada > Producción Proyectada
-```
-
-Objetivo:
-
-Mostrar de forma explícita los escenarios que requieren atención inmediata.
-
-Cada fila representa una posible situación de desabastecimiento que podría afectar el cumplimiento de compromisos comerciales.
+Permite identificar periodos futuros donde la producción prevista podría resultar insuficiente.
 
 ---
 
 # Consultas SQL
 
-Las consultas utilizadas para generar los archivos CSV se encuentran documentadas en:
+Las consultas SQL utilizadas por la aplicación se encuentran documentadas en:
 
 ```text
 consultas.sql
 ```
 
-Estas consultas fueron ejecutadas sobre Amazon Athena utilizando los datos almacenados en Amazon S3.
+Dichas consultas son ejecutadas dinámicamente sobre Amazon Athena durante la ejecución del dashboard.
 
 ---
 
 # Evidencias
 
-## Arquitectura AWS
+## Data Lake en Amazon S3
 
-
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/s3structure.png)
-
----
-
-## Amazon Athena
-
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/athenaConsults.png)
+images/s3structure.png
 
 ---
 
-## Dashboard
+## Consultas SQL en Amazon Athena
 
-![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
+images/athenaConsults.png
+
+---
+
+## Dashboard Analítico
+
+images/radargerencial2.png
 
 ---
 
@@ -456,40 +468,49 @@ Estas consultas fueron ejecutadas sobre Amazon Athena utilizando los datos almac
 El dashboard permite identificar:
 
 - Fincas con pérdidas superiores al promedio.
-- Operaciones productivas con costos elevados.
-- Dependencia comercial de mercados específicos.
+- Operaciones con altos costos por tallo exportado.
+- Dependencia de mercados específicos.
 - Variedades con bajo rendimiento económico.
-- Meses donde la demanda proyectada supera la producción prevista.
+- Riesgos de desabastecimiento para 2027.
 
 ---
 
 # Cumplimiento Académico
 
-La información utilizada en este dashboard proviene de consultas ejecutadas sobre Amazon Athena utilizando los datos almacenados en Amazon S3.
+La solución implementa una arquitectura analítica completa basada en servicios de AWS.
 
-La aplicación constituye una capa de visualización construida sobre los resultados analíticos obtenidos durante el desarrollo de la arquitectura propuesta para el examen.
+El proyecto integra:
+
+- Amazon S3 como Data Lake.
+- AWS Glue Data Catalog para metadatos.
+- Amazon Athena para procesamiento analítico mediante SQL.
+- Amazon EC2 para despliegue de la aplicación.
+- Streamlit como capa de visualización.
+- URL pública para acceso remoto.
+
+Toda la información presentada en el dashboard es obtenida dinámicamente desde Amazon Athena durante la ejecución de la aplicación.
 
 ---
 
 # Conclusión
 
-El Radar Gerencial de Anomalías transforma resultados analíticos obtenidos mediante Athena en información visual de fácil interpretación.
+El Radar Gerencial de Anomalías transforma información almacenada en un Data Lake de AWS en conocimiento útil para la toma de decisiones.
 
-La solución permite detectar:
+La integración entre Amazon S3, AWS Glue Data Catalog, Amazon Athena, Amazon EC2 y Streamlit permite construir una solución analítica capaz de detectar:
 
 - Ineficiencias operativas.
 - Pérdidas productivas.
-- Riesgos comerciales.
+- Dependencia comercial.
 - Problemas asociados a determinadas variedades.
 - Riesgos futuros de abastecimiento.
 
-De esta manera, el dashboard convierte información técnica del Data Lake en conocimiento útil para apoyar la toma de decisiones estratégicas dentro de Flores El Olor S.A.S.
+La aplicación constituye una capa de visualización construida sobre una arquitectura moderna de analítica de datos en la nube.
 
 ---
 
 # Autor
 
-María Fernanda Toro Torres
+**María Fernanda Toro Torres**
 
 Ingeniería en Inteligencia Artificial y Ciencia de Datos
 
