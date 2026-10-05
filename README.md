@@ -12,9 +12,8 @@ La solución permite analizar información operacional, productiva y comercial d
 
 La aplicación consulta información en tiempo real desde Amazon Athena y presenta los resultados mediante visualizaciones interactivas desarrolladas con Streamlit y Plotly.
 
-images/radargerencial.png
-
-images/radargerencial2.png
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial.png)
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
 
 ---
 
