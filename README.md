@@ -446,20 +446,18 @@ Dichas consultas son ejecutadas dinámicamente sobre Amazon Athena durante la ej
 
 ## Data Lake en Amazon S3
 
-images/s3structure.png
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/s3structure.png)
 
 ---
 
 ## Consultas SQL en Amazon Athena
 
-images/athenaConsults.png
-
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/athenaConsults.png)
 ---
 
 ## Dashboard Analítico
 
-images/radargerencial2.png
-
+![](https://github.com/mriatorres/dashboard-flores-el-olor-athena/blob/main/flores-el-olor-analytics-dashboard/images/radargerencial2.png)
 ---
 
 # Hallazgos Esperados
